@@ -16,11 +16,21 @@ const allowed = (process.env.CLIENT_URL || 'http://localhost:5173')
   .map((s) => s.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
+const escapeRe = (s) => s.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+
+// Supports exact origins and "*" wildcards, e.g. https://quill-*-myteam.vercel.app
+const isAllowed = (origin) =>
+  allowed.some((a) =>
+    a.includes('*')
+      ? new RegExp('^' + a.split('*').map(escapeRe).join('[^.]*') + '$').test(origin)
+      : a === origin
+  );
+
 app.use(
   cors({
     origin(origin, cb) {
       // allow same-origin / curl (no Origin header) and whitelisted origins
-      if (!origin || allowed.includes(origin)) return cb(null, true);
+      if (!origin || isAllowed(origin)) return cb(null, true);
       cb(new Error('Not allowed by CORS'));
     },
   })
