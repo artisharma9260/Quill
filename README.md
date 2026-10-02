@@ -95,6 +95,3 @@ Open http://localhost:5173
 | PUT | /api/blogs/:id | Update a blog |
 | DELETE | /api/blogs/:id | Delete a blog |
 
-## Author
-
-Your Name - B.Tech Final Year Project
